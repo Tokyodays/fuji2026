@@ -58,9 +58,9 @@ HEAD_TOP     = 74      # ステージヘッダー帯 上端
 HEAD_BOTTOM  = 188     # ステージヘッダー帯 下端
 PLOT_X0      = 250     # プロット左端（時間軸との境界）
 PLOT_X1      = 3419    # プロット右端
-T0_MIN       = 540     # 09:00 を分で
+T0_MIN       = 510     # 08:30 を分で（早朝ヨガ枠を収めるため09:00より前から）
 T1_MIN       = 1740    # 29:00 を分で
-Y_T0         = 193     # 09:00 の画素y
+Y_T0         = 193     # T0_MIN の画素y（ヘッダー帯直下）
 PX_PER_MIN   = 1.825   # 1分あたりの画素
 
 N_COL   = len(STAGES)
@@ -177,13 +177,27 @@ def autofit(text, max_w, max_size, min_size=5.0, max_lines=3):
     return min_size, wrap(text, min_size, max_w)
 
 
+def autofit_box(text, max_w, max_h, max_size, min_size=4.0, lead_ratio=0.82):
+    """幅max_w・高さmax_h に全文が収まる最大フォントサイズと行を返す。
+    収まらない場合は (min_size, 行, fits=False) を返す。"""
+    size = max_size
+    while size >= min_size:
+        lines = wrap(text, size, max_w)
+        lead = size + 1.0
+        if all(_sw(l, size) <= max_w for l in lines) and len(lines) * lead <= max_h:
+            return size, lines, True
+        size -= 0.25
+    lines = wrap(text, min_size, max_w)
+    return min_size, lines, False
+
+
 def draw_header(c, day_label):
     # 上部オレンジバー
     c.setFillColor(ORANGE)
     c.rect(0, Y(BAR_BOTTOM), PAGE_W, PAGE_H - Y(BAR_BOTTOM), stroke=0, fill=1)
     c.setFillColor(Color(1, 1, 1))
     c.setFont(FONT, 12)
-    title = f"{day_label} / FUJI ROCK FESTIVAL '26 - 10分刻み A4一覧 (09:00-29:00)"
+    title = f"{day_label} / FUJI ROCK FESTIVAL '26 - 10分刻み A4一覧 (08:30-29:00)"
     c.drawString(X(24), Y(BAR_BOTTOM) + (PAGE_H - Y(BAR_BOTTOM) - 12) / 2 + 1, title)
 
     # ステージヘッダー帯
@@ -239,6 +253,7 @@ def draw_blocks(c, rows):
     colhex = {i: h for i, (_, _, h) in enumerate(STAGES)}
     plot_top = y_of_min(T0_MIN)
     plot_bot = y_of_min(T1_MIN)
+    overflow = []
     for stage, start, end, artist in rows:
         i = idx.get(norm(stage))
         if i is None:
@@ -252,28 +267,47 @@ def draw_blocks(c, rows):
         w = COL_W - 2 * GAP
         x0, x1 = X(left), X(left + w)
         yt, yb = Y(y_top), Y(y_bot)
+        H = yt - yb
         hexc = colhex[i]
         c.setFillColor(tint(hexc))
         c.setStrokeColor(HexColor(hexc)); c.setLineWidth(0.7)
-        c.roundRect(x0, yb, x1 - x0, yt - yb, 3, stroke=1, fill=1)
-        # 時刻
+        c.roundRect(x0, yb, x1 - x0, H, 3, stroke=1, fill=1)
+
         pad = 3
-        cy = yt - 8
-        c.setFillColor(MUTED); c.setFont(FONT, 5)
-        c.drawString(x0 + pad, cy, f"{start}-{end}")
-        # アーティスト名
-        c.setFillColor(INK)
-        size = 7
         max_w = x1 - x0 - 2 * pad
-        lines = wrap(artist, size, max_w)
-        ty = cy - size - 1
-        avail_bottom = yb + 2
+        top_pad, bot_pad = 1.8, 1.3
+        gap = 0.8
+        avail_h = H - top_pad - bot_pad
+        if avail_h <= 4:
+            overflow.append((stage, start, artist, "no-room"))
+            continue
+        # 時刻は常に表示。狭いセルでは時刻・名前とも縮小して両方収める。
+        t_size = 5.0 if avail_h >= 13 else 3.7
+        # 名前用に最低限の高さ(約3.4pt)を確保できるよう時刻サイズを詰める
+        if avail_h - t_size - gap < 3.4:
+            t_size = max(3.2, avail_h - gap - 3.4)
+        t_base = yt - top_pad - t_size
+        c.setFillColor(MUTED); c.setFont(FONT, t_size)
+        c.drawString(x0 + pad, t_base, f"{start}-{end}")
+
+        # アーティスト名：残り高さと幅の両方に収まる最大サイズへ自動縮小
+        a_top = t_base - gap
+        a_bottom = yb + bot_pad
+        name_h = a_top - a_bottom
+        size, lines, fits = autofit_box(artist, max_w, name_h, 7.0, min_size=3.2)
+        lead = size + 1.0
+        ty = a_top - size
+        c.setFillColor(INK); c.setFont(FONT, size)
+        drawn = 0
         for ln in lines:
-            if ty < avail_bottom:
+            if ty < a_bottom - 0.5:
                 break
-            c.setFont(FONT, size)
             c.drawString(x0 + pad, ty, ln)
-            ty -= size + 1
+            ty -= lead
+            drawn += 1
+        if not fits or drawn < len(lines):
+            overflow.append((stage, start, artist, f"{size:.1f}pt {drawn}/{len(lines)}"))
+    return overflow
 
 
 def draw_footer(c):
@@ -301,12 +335,16 @@ def build_day(day, label):
     c = canvas.Canvas(pdf_path, pagesize=(PAGE_W, PAGE_H))
     c.setTitle(f"FUJI_ROCK_26_{day.upper()}_A4_10min_timetable")
     draw_grid(c)
-    draw_blocks(c, rows)
+    overflow = draw_blocks(c, rows)
     draw_header(c, label)
     draw_footer(c)
     c.showPage()
     c.save()
     print("wrote", pdf_path)
+    if overflow:
+        print(f"  ⚠ 収まりきらないブロック {len(overflow)}件:")
+        for stage, start, artist, info in overflow:
+            print(f"     [{stage} {start}] {artist}  ({info})")
     return pdf_path
 
 
