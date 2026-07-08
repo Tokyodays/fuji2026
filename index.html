@@ -6,58 +6,287 @@
   <title>FUJI ROCK FESTIVAL '26 タイムテーブル</title>
   <meta name="description" content="FUJI ROCK FESTIVAL '26 のA4 10分刻みタイムテーブルPDF。">
   <style>
-    :root { --bg:#f7f7f5; --ink:#191919; --muted:#666; --card:#fff; --line:#ddd; }
+    :root {
+      --bg: #f7f5ef;
+      --paper: #fffef9;
+      --ink: #151515;
+      --muted: #67625b;
+      --line: #ded8cc;
+      --orange: #f36b21;
+      --orange2: #ff8a4b;
+      --dark: #141414;
+      --shadow: 0 16px 36px rgba(35, 28, 20, .10);
+      --green: #68a93a;
+      --white-stage: #8b8b8b;
+      --red: #f05a4a;
+      --cyan: #55c3cf;
+      --yellow: #f4a03a;
+      --pink: #c84d80;
+      --teal: #43b7ad;
+      --olive: #a0a312;
+      --blue: #356aa2;
+    }
+
     * { box-sizing: border-box; }
-    body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, "Hiragino Sans", "Yu Gothic", sans-serif; background:var(--bg); color:var(--ink); }
-    header { padding: 28px 18px 16px; text-align:center; }
-    h1 { margin:0 0 8px; font-size: clamp(24px, 4.8vw, 42px); letter-spacing:.02em; }
-    .lead { margin:0 auto; max-width:760px; color:var(--muted); line-height:1.7; font-size:15px; }
-    main { width:min(1120px, 100%); margin:0 auto; padding: 12px 14px 40px; }
-    .download { background:#111; color:#fff; border-radius:20px; padding:20px; margin:0 0 18px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; box-shadow:0 8px 24px rgba(0,0,0,.08); }
-    .download h2 { color:#fff; margin:0 0 6px; }
-    .download p { margin:0; color:#ddd; line-height:1.6; }
-    .download a { display:inline-block; padding:12px 16px; border-radius:999px; background:#fff; color:#111; text-decoration:none; font-weight:800; }
-    .grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; }
-    .card { background:var(--card); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.06); }
-    .thumb { display:block; background:#fff; border-bottom:1px solid var(--line); }
-    .thumb img { display:block; width:100%; height:auto; }
-    .body { padding:16px; }
-    h2 { margin:0 0 10px; font-size:22px; }
-    .buttons { display:flex; gap:8px; flex-wrap:wrap; }
-    a.button { display:inline-block; padding:10px 12px; border-radius:999px; background:#111; color:#fff; text-decoration:none; font-weight:700; font-size:14px; }
-    a.sub { background:#e9e9e6; color:#111; }
-    footer { color:var(--muted); text-align:center; font-size:12px; padding:0 16px 32px; line-height:1.6; }
-    @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } header { text-align:left; } .lead { margin:0; } }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, "Hiragino Sans", "Yu Gothic", sans-serif;
+      background:
+        linear-gradient(180deg, rgba(243,107,33,.08), transparent 260px),
+        var(--bg);
+      color: var(--ink);
+    }
+    a { color: inherit; }
+
+
+
+    header {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      padding: 28px 18px 18px;
+    }
+
+
+
+
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5.2vw, 76px);
+      line-height: .92;
+      letter-spacing: -.065em;
+      font-weight: 1000;
+      white-space: nowrap;
+    }
+    .subtitle {
+      margin: 12px 0 0;
+      font-size: clamp(20px, 2.7vw, 38px);
+      line-height: 1.08;
+      letter-spacing: -.045em;
+      font-weight: 1000;
+    }
+    .lead {
+      margin: 12px 0 0;
+      max-width: 760px;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 15px;
+      font-weight: 650;
+    }
+    .stamp {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: #fff;
+      border: 10px solid var(--orange);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      box-shadow: var(--shadow);
+      transform: rotate(-4deg);
+      flex: 0 0 auto;
+    }
+    .stamp strong { display: block; font-size: 42px; line-height: .8; letter-spacing: -.06em; }
+    .stamp span { display: block; margin-top: 8px; font-size: 12px; font-weight: 1000; color: var(--muted); letter-spacing: .06em; }
+
+    main {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      padding: 18px 18px 46px;
+    }
+
+    section { scroll-margin-top: 18px; }
+
+    .download {
+      position: relative;
+      overflow: hidden;
+      background: var(--dark);
+      color: #fff;
+      border-radius: 22px;
+      padding: 24px;
+      margin: 0 0 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+    .download::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 8px;
+      background: linear-gradient(90deg, var(--green), var(--white-stage), var(--red), var(--cyan), var(--yellow), var(--pink), var(--teal), var(--olive), var(--blue));
+    }
+    .download h2 { margin: 0 0 8px; font-size: clamp(26px, 3.2vw, 42px); letter-spacing: -.05em; line-height: 1; }
+    .download p { margin: 0; color: #ddd7cf; line-height: 1.65; font-weight: 700; }
+    .download a {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 52px;
+      padding: 13px 20px;
+      border-radius: 999px;
+      background: #fff;
+      color: #111;
+      text-decoration: none;
+      font-weight: 1000;
+      white-space: nowrap;
+      box-shadow: 0 8px 18px rgba(0,0,0,.24);
+    }
+    .download a:hover, .download a:focus-visible { outline: 3px solid rgba(255,255,255,.35); }
+
+
+
+
+
+
+
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .card-head {
+      color: #fff;
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 13px;
+      font-weight: 1000;
+      letter-spacing: .02em;
+    }
+    .card:nth-child(1) .card-head { background: var(--orange); }
+    .card:nth-child(2) .card-head { background: #2387c8; }
+    .card:nth-child(3) .card-head { background: var(--orange); }
+    .card-head small { font-size: 11px; opacity: .86; font-weight: 900; }
+    .thumb {
+      display: block;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+    }
+    .thumb img {
+      display: block;
+      width: 100%;
+      height: auto;
+      transform: scale(1.01);
+      transform-origin: top center;
+    }
+    .body { padding: 14px; }
+    .buttons { display: flex; gap: 9px; flex-wrap: wrap; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 10px 13px;
+      border-radius: 999px;
+      background: #111;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 1000;
+      font-size: 14px;
+    }
+    .sub { background: #ece7dd; color: #111; }
+    .button:hover, .button:focus-visible { outline: 3px solid rgba(243,107,33,.25); }
+
+    footer {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      padding: 0 18px 34px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 980px) {
+      .hero { grid-template-columns: 1fr; }
+      .stamp { display: none; }
+      h1 { font-size: clamp(34px, 10vw, 60px); }
+  
+  
+  
+      .grid { grid-template-columns: 1fr; }
+      .download { grid-template-columns: 1fr; }
+      .download a { width: 100%; }
+    }
+    @media (max-width: 560px) {
+  
+      header { padding: 18px 14px 14px; }
+      main { padding: 14px 14px 36px; }
+      h1 { font-size: clamp(28px, 12vw, 44px); letter-spacing: -.075em; }
+      .subtitle { font-size: clamp(19px, 7vw, 28px); }
+  
+  
+  
+  
+  
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>FUJI ROCK FESTIVAL '26<br>10分刻みタイムテーブル</h1>
-    <p class="lead">A4横1枚で見られるように整理したPDFです。各日09:00-29:00の時間軸で、同じ時間にどのステージで何が演っているかを確認できます。</p>
+    <div class="hero">
+      <div>
+        <h1>FUJI ROCK FESTIVAL '26</h1>
+        <p class="subtitle">A4横サイズ タイムテーブル</p>
+        <p class="lead">A4横1枚で見られるように整理したPDFです。09:00-29:00、10分刻み、ステージ別の横並びです。</p>
+      </div>
+      <div class="stamp" aria-hidden="true"><div><strong>3</strong><span>DAYS PDF</span></div></div>
+    </div>
   </header>
+
   <main>
-    <section class="download" aria-label="3日間まとめPDF">
+    <section class="download" id="download" aria-label="3日間まとめPDF">
       <div>
         <h2>3日間まとめPDF</h2>
         <p>24 FRI / 25 SAT / 26 SUN を1つのPDFにまとめています。</p>
       </div>
       <a href="assets/3days.pdf" download>PDFをダウンロード</a>
     </section>
-    <section class="grid" aria-label="日別タイムテーブル">
+
+    <section class="grid" id="daily" aria-label="日別タイムテーブル">
       <article class="card">
+        <div class="card-head"><span>24 FRI</span><small>PDF / CSV</small></div>
         <a class="thumb" href="assets/24fri.pdf"><img src="assets/24fri.png" alt="24 FRI タイムテーブルのプレビュー"></a>
-        <div class="body"><h2>24 FRI</h2><div class="buttons"><a class="button" href="assets/24fri.pdf">PDFを見る</a><a class="button sub" href="assets/24fri.csv">CSV</a></div></div>
+        <div class="body"><div class="buttons"><a class="button" href="assets/24fri.pdf">PDFを見る</a><a class="button sub" href="assets/24fri.csv">CSV</a></div></div>
       </article>
+
       <article class="card">
+        <div class="card-head"><span>25 SAT</span><small>PDF / CSV</small></div>
         <a class="thumb" href="assets/25sat.pdf"><img src="assets/25sat.png" alt="25 SAT タイムテーブルのプレビュー"></a>
-        <div class="body"><h2>25 SAT</h2><div class="buttons"><a class="button" href="assets/25sat.pdf">PDFを見る</a><a class="button sub" href="assets/25sat.csv">CSV</a></div></div>
+        <div class="body"><div class="buttons"><a class="button" href="assets/25sat.pdf">PDFを見る</a><a class="button sub" href="assets/25sat.csv">CSV</a></div></div>
       </article>
+
       <article class="card">
+        <div class="card-head"><span>26 SUN</span><small>PDF / CSV</small></div>
         <a class="thumb" href="assets/26sun.pdf"><img src="assets/26sun.png" alt="26 SUN タイムテーブルのプレビュー"></a>
-        <div class="body"><h2>26 SUN</h2><div class="buttons"><a class="button" href="assets/26sun.pdf">PDFを見る</a><a class="button sub" href="assets/26sun.csv">CSV</a></div></div>
+        <div class="body"><div class="buttons"><a class="button" href="assets/26sun.pdf">PDFを見る</a><a class="button sub" href="assets/26sun.csv">CSV</a></div></div>
       </article>
     </section>
   </main>
+
   <footer>
     <p>個人用に整理した非公式タイムテーブルです。出演時間などは必ず公式発表も確認してください。</p>
   </footer>
